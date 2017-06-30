@@ -200,6 +200,9 @@ class RegexFormat(BaseFormat):
         match_result = self.regex.match(line)
         if match_result:
             self.matched = match_result.groupdict()
+            if 'time' in self.matched:
+                self.matched['date'] = self.matched['date'] + ' ' + self.matched['time']
+                del self.matched['time']
         else:
             self.matched = None
         return match_result
@@ -222,8 +225,8 @@ class W3cExtendedFormat(RegexFormat):
     FIELDS_LINE_PREFIX = '#Fields: '
 
     fields = {
-        'date': '(?P<date>\d+[-\d+]+',
-        'time': '[\d+:]+)[.\d]*?', # TODO should not assume date & time will be together not sure how to fix ATM.
+        'date': '"?(?P<date>\d+[-\d+]+)"?',
+        'time': '"?(?P<time>[\d+:]+)[.\d]*?"?',
         'cs-uri-stem': '(?P<path>/\S*)',
         'cs-uri-query': '(?P<query_string>\S*)',
         'c-ip': '"?(?P<ip>[\w*.:-]*)"?',
